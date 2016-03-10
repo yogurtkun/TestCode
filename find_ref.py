@@ -1,5 +1,6 @@
 import re
 import os
+import time
 
 #3.5思路总结，reference误识别率高，下一步改进的方法有两个
 #1. 交集中的元素找在title和ref中的位置，去掉多次重复的之后，求平均距离，不能超过一个数值
@@ -9,6 +10,9 @@ global ref_dict
 ref_dict = {}
 
 #提取reference部分
+new_abstract_s = r'(?:[\n .]|@@@@@)(?:R|r)eferences(.*?)$'
+new_abstract_pattern = re.compile(new_abstract_s,re.S)
+
 abstract_s = r'@@@@@(?:R|r)eferences(.*?)$'
 abstract_pattern = re.compile(abstract_s,re.S)
 
@@ -63,6 +67,8 @@ def future_judge(author_string,word_set):
 
     count = 0
     for word in author_set:
+        if len(word) < 2:
+            continue
         if word in word_set:
             count += 1
 
@@ -86,24 +92,76 @@ def find_ref(filename):
         read_file = file.read().decode('utf-8',errors='ignore')
 
     #提取出references部分
-    abstract_part = abstract_pattern.findall(read_file)
-    if len(abstract_part) == 0:
-        map_file.write('\n')
-        warning_file.write('no refer part:'+file_num+'\n')
-        return []
-    abstract_file = abstract_part[0].split('\n')
+
+    # abstract_part = abstract_pattern.findall(read_file)
+    # if len(abstract_part) == 0:
+    #     map_file.write('\n')
+    #     warning_file.write('no refer part:'+file_num+'\n')
+    #     return []
+    # abstract_file = abstract_part[0].split('\n')
+
+    abstract_part = []
+    abstract_part.append(read_file)
+    while(True):
+        abstract_part = new_abstract_pattern.findall(abstract_part[0])
+        # print(abstract_part)
+        if len(abstract_part) == 0:
+            map_file.write('\n')
+            warning_file.write('no refer part:'+file_num+'\n')
+            return []
+        abstract_file = abstract_part[0].split('\n')
+        if len(abstract_file) <= 2:
+            map_file.write('\n')
+            return []
+        for num in range(len(abstract_file)-1):
+            if len(abstract_file[num]) < 2 and num > len(abstract_file)-1:
+                continue
+
+            if num == len(abstract_file) - 1:
+                map_file.write('\n')
+                return []
+            else:
+                line_1 = abstract_file[num]
+                line_2 = abstract_file[num+1]
+                break
+
+        if (not re.search('\d{4}',line_1)) and (not re.search('\d{4}',line_2)):
+            # print('!!!!!!!!!!!!!'+filename)
+            abstract_part = [abstract_part[0]]
+        else:
+            break
+
+    # abstract_part = new_abstract_pattern.findall(read_file)
+    # if len(abstract_part) == 0:
+    #     map_file.write('\n')
+    #     warning_file.write('no refer part:'+file_num+'\n')
+    #     return []
+    # abstract_file = abstract_part[0].split('\n')
+    #
+    # if (not re.search('\d{4}',abstract_file[0])) and (not re.search('\d{4}',abstract_file[1])):
+    #     print('!!!!!!!!!!!!!'+filename)
+    #     abstract_part = abstract_pattern.findall(abstract_part[0])
+    #     if len(abstract_part) == 0:
+    #         map_file.write('\n')
+    #         warning_file.write('no refer part:'+file_num+'\n')
+    #         return []
+    #     abstract_file = abstract_part[0].split('\n')
+
 
     #将references部分每行做成一个词的集合
     raw_text = []
     for id in range(len(abstract_file)):
-        line = abstract_file[id]
-        if line[-2] == ',' and id!= len(abstract_file):
-            print(''.join(line,abstract_file[id+1]))
+        line = abstract_file[id][0:-1]
+        if len(line) < 2:
+            continue
+        if line[-1] == ',' and id!= (len(abstract_file)-1):
+            line += abstract_file[id+1]
 
         temp_string = line.lower()
         temp_string = re.split(' |[,.:;]',temp_string)
         raw_text.append(temp_string)
     if len(raw_text) < 2:
+        map_file.write('\n')
         return []
 
     raw_text = list(map(lambda x:(set(x),x),raw_text))
@@ -124,14 +182,14 @@ def find_ref(filename):
         for item in raw_text:
             mutual = item[0] & set_string
             #如果相似的词的数量超过标准标题的80%即可认为是出现了的
-            if len(mutual)/len(set_string) > 0.80:
+            if len(mutual)/len(set_string) >= 0.80:
                 # if 'J89-4002' == key:
                 #     print(item[0])
                 #     print(set_string)
                 #     print(mutual)
                 if future_judge(value[1],item[0]):
                     acl_ref_list.append(key)
-                break
+                    break
 
 
     if len(acl_ref_list) == 0:
@@ -153,13 +211,25 @@ warning_file = open('./no_references.txt','w')
 map_file = open('./map_file.txt','w')
 
 build_dict('./titleset.txt')
+start = time.clock()
 
 for parent,dirnames,filenames in os.walk('./lin_txt_processed'):
+    total_num = len(filenames)
+    finish_num = 0
     for filename in filenames:
+        if not re.match('[A-Z]\d{2}-\d{4}.txt',filename):
+            continue
+        if '000' in filename:
+            continue
         print('try '+filename)
-        ref_list = find_ref('W94-0307.txt')
-        print('finish '+filename)
-        break
+        ref_list = find_ref(filename)
+
+        finish_num += 1
+        if finish_num%100 == 0:
+            print('FINISH'+str(finish_num/total_num))
+            end_t = time.clock()
+            print('It consume '+str(end_t)+'s')
+        # print('finish '+filename)
 
 
 warning_file.close()
