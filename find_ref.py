@@ -10,7 +10,7 @@ global ref_dict
 ref_dict = {}
 
 #提取reference部分
-new_abstract_s = r'(?:[\n .]|@@@@@)(?:R|r)eferences(.*?)$'
+new_abstract_s = r'(?:[\n .]|@@@@@)(?:R|r)eferences?(.*?)$'
 new_abstract_pattern = re.compile(new_abstract_s,re.S)
 
 abstract_s = r'@@@@@(?:R|r)eferences(.*?)$'
@@ -131,23 +131,6 @@ def find_ref(filename):
         else:
             break
 
-    # abstract_part = new_abstract_pattern.findall(read_file)
-    # if len(abstract_part) == 0:
-    #     map_file.write('\n')
-    #     warning_file.write('no refer part:'+file_num+'\n')
-    #     return []
-    # abstract_file = abstract_part[0].split('\n')
-    #
-    # if (not re.search('\d{4}',abstract_file[0])) and (not re.search('\d{4}',abstract_file[1])):
-    #     print('!!!!!!!!!!!!!'+filename)
-    #     abstract_part = abstract_pattern.findall(abstract_part[0])
-    #     if len(abstract_part) == 0:
-    #         map_file.write('\n')
-    #         warning_file.write('no refer part:'+file_num+'\n')
-    #         return []
-    #     abstract_file = abstract_part[0].split('\n')
-
-
     #将references部分每行做成一个词的集合
     raw_text = []
     for id in range(len(abstract_file)):
@@ -169,6 +152,7 @@ def find_ref(filename):
     #取出所有的已在词典中的文献
     acl_ref_list = []
     for key,value in ref_dict.items():
+
         string = value[0]
         string = string.lower()
         string = re.split(' |[,.;:]',string)
@@ -182,8 +166,8 @@ def find_ref(filename):
         for item in raw_text:
             mutual = item[0] & set_string
             #如果相似的词的数量超过标准标题的80%即可认为是出现了的
-            if len(mutual)/len(set_string) >= 0.80:
-                # if 'J89-4002' == key:
+            if len(set_string) - len(mutual) <=1 and len(mutual)/len(set_string)>= 5/6:
+                # if 'P05-1022' == key:
                 #     print(item[0])
                 #     print(set_string)
                 #     print(mutual)
