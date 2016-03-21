@@ -1,11 +1,11 @@
 import re
-import html
 
-str = 'H&#246;ir, world'
+sta = 'Natalie Kübler:L14-1085;@@@@@\n'
 
-utf_pattern = re.compile('&#(\d{3});')
+author_paper_string = '(.*?):(.*?)@@@@@(.*?)\n'
+author_paper_pattern = re.compile(author_paper_string)
 
-result = html.unescape(str)
+result = author_paper_pattern.findall(sta)
 
-print(result)
-
+for item in result:
+    print(item)
