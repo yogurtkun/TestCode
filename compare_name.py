@@ -70,18 +70,22 @@ def ifSameName(text1,text2):
 
 def ifSameNameP(text1,text2):
 
-    s1_list = re.split('[ -\.]',text1)
-    s2_list = re.split('[ -\.]',text2)
+    #把两个名字分开成一个一个单词
+    s1_list = re.split('[ -\.]',text1.lower())
+    s2_list = re.split('[ -\.]',text2.lower())
 
+    #去掉空字符串
     while '' in s1_list:
         s1_list.remove('')
     while '' in s2_list:
         s2_list.remove('')
 
     # try:
+    #如果名不一样，则视为不一样
     if s1_list[-1] != s2_list[-1]:
         return False
 
+    #分成长名字和短名字
     if len(s1_list) < len(s2_list):
         short_name = s1_list
         long_name = s2_list
@@ -92,29 +96,33 @@ def ifSameNameP(text1,text2):
     # print(short_name)
     # print(long_name)
 
+    #如果短名字或者长名字有一个是单个字母，那么只要判断是不是相同即可
     if len(short_name[0]) == 1 or len(long_name[0]) == 1:
         if not short_name[0][0] == long_name[0][0]:
             return False
-    else:
+    else:  #如果都不是缩写，则需要完全一致
         if not short_name == long_name:
             return False
 
     if len(short_name) <= 2:
         return True
 
+    #取出中间部分进行对比
     new_short = short_name[1:-1]
     new_long = long_name[1:-1]
 
     # print(new_short)
     # print(new_long)
 
+    #取出长名字的首字母
     C_long = list(map(lambda x:x[0],new_long))
 
-    print(C_long)
+    #print(C_long)
 
+    #根据短名字逐次到长名字中去比较
     for word in new_short:
         if len(word) > 1:
-            if not (word in new_long or word[0] in new_long):
+            if not ((word in new_long) or (word[0] in new_long)):
                 return False
             else:
                 continue
