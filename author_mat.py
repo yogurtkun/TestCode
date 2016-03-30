@@ -1,4 +1,5 @@
 import re
+import json
 from function_tool import *
 
 #建立dict
@@ -24,6 +25,7 @@ def add_author_ref(author_name,paper):
     related_papers = paper_ref_dict[paper]
 
     remove_paper = []
+    #去除掉年份不合理的引用文献，比如06年的文献引用09年的文献
     for related_paper in related_papers:
         if not compare_year(paper,related_paper):
             remove_paper.append(related_paper)
@@ -33,14 +35,21 @@ def add_author_ref(author_name,paper):
     if not author_name in author_author_dict:
         author_author_dict[author_name] = {}
 
+    #引用的作者也都是去过重名的
     for related_paper in related_papers:
         if not related_paper in id_author_dict:
             continue
         related_authors = id_author_dict[related_paper]
+
+        #把作者名换成本名
+        related_authors = list(map(lambda x:x if not x in same_name_dict else same_name_dict[x],related_authors))
+
+        #把自引用的情况排除
+        if author_name in related_authors:
+            continue
+
+        #记录引用的结果
         for related_author in related_authors:
-            if related_author in same_name_dict:
-                #print(related_author + ':'+ same_name_dict[related_author])
-                related_author = same_name_dict[related_author]
             if not related_author in author_author_dict[author_name]:
                 author_author_dict[author_name][related_author] = 1
             else:
@@ -50,10 +59,10 @@ log_file = open('./log_info.txt','w')
 debug_file = open('./debug_file.txt','w')
 author_dict_file = open('./author_dict_file.txt','w')
 
-id_author_dict = {} #id对作者名字
+id_author_dict = {} #id对作者名字,作者名字含有重名
 paper_ref_dict = {} #id对id
 same_name_dict = {} #作者名对同名作者名
-author_id_dict = {} #作者名对发表的论文id
+author_id_dict = {} #作者名对发表的论文id，这个不包含重名
 author_author_dict = {} #作者和作者的引用关系 格式：key（作者名）：[[引用作者名：次数]]
 reverse_author_dict = {} #作者和引用他的作者的关系 格式:key(作者名)：[[引用他的作者名：次数]]
 
@@ -115,6 +124,28 @@ for key,value in reverse_author_dict.items():
     author_dict_file.write('\n')
 
 log_file.write(str(paper_ref_dict))
+
+#把dict保存成json文件
+id_author_json = json.dumps(id_author_dict,ensure_ascii=False)
+paper_ref_json = json.dumps(paper_ref_dict,ensure_ascii=False)
+same_name_json = json.dumps(same_name_dict,ensure_ascii=False)
+author_id_json = json.dumps(author_id_dict,ensure_ascii=False)
+author_author_json = json.dumps(author_author_dict,ensure_ascii=False)
+reverse_author_json = json.dumps(reverse_author_dict,ensure_ascii=False)
+
+save_path = './un_mod_mat/'
+with open(save_path+'id_author.txt','w') as file:
+    file.write(id_author_json)
+with open(save_path+'paper_ref.txt','w') as file:
+    file.write(paper_ref_json)
+with open(save_path+'same_name.txt','w') as file:
+    file.write(same_name_json)
+with open(save_path+'author_id.txt','w') as file:
+    file.write(author_id_json)
+with open(save_path+'author_author.txt','w') as file:
+    file.write(author_author_json)
+with open(save_path+'reverse_author.txt','w') as file:
+    file.write(reverse_author_json)
 
 log_file.close()
 debug_file.close()
