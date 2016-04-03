@@ -58,16 +58,16 @@ knnClf.fit(tfidf_mat,class_id_list)  #training the classifier
 #joblib.dump(knnClf,'./knn_model.m')
 
 data_dir = '../lin_txt_processed/'
-count = 0
+# count = 0
 for parent,dirnames,filenames in os.walk(data_dir):
     for filename in filenames:
         if re.match('[A-Z]\d{2}-\d{4}',filename):
             if '000' in filename:
                 continue
             give_label(filename)
-            count += 1
-            if count == 100:
-                break
+            # count += 1
+            # if count == 100:
+            #     break
 
 #log_file.write(str(label_info_dict))
 print(label_info_dict)
