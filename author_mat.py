@@ -2,6 +2,10 @@ import re
 import json
 from function_tool import *
 
+'''
+建立起各种应用关系，author之间的引用关系已经去掉了自引用的情况，文章之间的自应用权重调整有专有的模块
+'''
+
 #建立dict
 def build_dict(id,a_list,dict):
     dict[id] = a_list

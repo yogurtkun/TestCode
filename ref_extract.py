@@ -1,6 +1,7 @@
 import re
 import os
 
+#废弃，并没有使用
 data_dir = r'./lin_txt_annotated'
 write_file = r'./result.txt'
 error_file = r'./error.txt'

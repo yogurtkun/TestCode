@@ -7,6 +7,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.stem.porter import PorterStemmer
 from sklearn.neighbors import KNeighborsClassifier
 
+'''
+废弃代码
+'''
+
 trans_table = {ord(c): None for c in string.punctuation}  #去掉标点符号的转换矩阵
 
 log_file = open('./log.txt','w')

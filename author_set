@@ -1,6 +1,8 @@
 import re
 import os
 
+#整理出爬下来的数据的
+
 at_info = r'./data'
 at_dict = {}
 

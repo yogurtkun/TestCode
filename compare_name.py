@@ -1,4 +1,9 @@
 #-*-coding:utf-8-*-
+
+'''
+比较两个名字是否是一个名字，主要使用的是ifSameNameP这个函数
+'''
+
 import re
 
 s1 = 'C. H. Lee'

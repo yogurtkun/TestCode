@@ -3,8 +3,9 @@ import re
 from compare_name import ifSameName
 from compare_name import ifSameNameP
 
-author_dict = {}
+#整理出作者和他发表的论文关系，并保存他的同名
 
+author_dict = {}
 
 def addToDict(name,title):
 

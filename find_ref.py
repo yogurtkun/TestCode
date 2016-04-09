@@ -2,6 +2,8 @@ import re
 import os
 import time
 
+#查找一篇文章的references
+
 #3.5思路总结，reference误识别率高，下一步改进的方法有两个
 #1. 交集中的元素找在title和ref中的位置，去掉多次重复的之后，求平均距离，不能超过一个数值
 #2. 用已经确定的作者信息去交叉验证

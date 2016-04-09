@@ -1,5 +1,9 @@
 import json
 
+'''
+转换一下结果，标记为分类对文章id
+'''
+
 with open('./label_info.txt','r') as file:
     read_file = file.read()
 

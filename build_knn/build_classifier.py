@@ -3,11 +3,13 @@ import nltk
 import string
 import os
 import re
-import time
-#from sklearn.externals import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.stem.porter import PorterStemmer
 from sklearn.neighbors import KNeighborsClassifier
+
+'''
+建立knn分类器，并对每个文档进行分类
+'''
 
 stemmer = PorterStemmer()
 trans_table = {ord(c): None for c in string.punctuation}  #去掉标点符号的转换矩阵

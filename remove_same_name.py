@@ -1,5 +1,7 @@
 import json
 
+#把id对author中的重名author替换掉
+
 dict_data_path = './un_mod_mat/'
 
 id_author_dict = {} #id对作者名字,作者名字含有重名

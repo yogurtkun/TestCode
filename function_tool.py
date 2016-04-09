@@ -1,5 +1,7 @@
 import re
 
+#在应用关系中，判断引用是否合理
+
 def compare_year(id1,id2):
     year1 = re.findall('[A-Z](\d{2})-',id1)[0]
     year2 = re.findall('[A-Z](\d{2})-',id2)[0]

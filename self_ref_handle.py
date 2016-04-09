@@ -2,6 +2,7 @@
 import json
 from function_tool import compare_year
 
+#处理自引用时候的权重问题
 dict_data_path = './un_mod_mat/'
 
 id_author_dict = {} #id对作者名字,作者名字含有重名
