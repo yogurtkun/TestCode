@@ -2,7 +2,7 @@ import json
 import networkx as nx
 
 '''
-做pagerank的代码部分
+做全局pagerank的代码部分
 '''
 with open('../un_mod_mat/new_id_ref.txt','r') as file:
     read_file = file.read()
