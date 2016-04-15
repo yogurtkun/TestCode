@@ -1,6 +1,5 @@
+from function_tool import get_rank_paper_list
 
-a = [('a',1),('b',4),('d',2),('e',1.5)]
+a = get_rank_paper_list('./result/scores_1.txt')
 
-sorted(a,key = lambda x:x[1])
-
-print(a)
+print(len(a))

@@ -17,3 +17,16 @@ def compare_year(id1,id2):
 def clean_list(x):
     while '' in x:
         x.remove('')
+
+
+def get_rank_paper_list(path):
+    '''
+    :param path:str
+    :return :list
+    '''
+    with open(path,'r') as file:
+        paper_lines = file.readlines()
+
+    paper_list = list(map(lambda x:re.findall(r'([A-Z]\d{2}-\d{4}):(.*?)\n',x)[0],paper_lines))
+    return_list = list(map(lambda x:(x[0],float(x[1])),paper_list))
+    return return_list
